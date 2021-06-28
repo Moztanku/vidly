@@ -1,20 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Joi = require('joi');
-const mongoose = require('mongoose');
-
-const Genres = new mongoose.model('Genre',{
-    id:{
-        type: Number,
-        required: true
-    },
-    value:{
-        type: String,
-        minlength: 3,
-        maxlength: 12,
-        required: true
-    }
-});
+const {Genres, validate} = require('../models/genres');
 
 async function getGenresCount(){
     const result = await Genres.findOne({}).sort({id:-1}).select({id:1,_id:0}).lean();
@@ -68,7 +54,7 @@ router.put('/:id',async(req,res)=>{
         console.log(ex.message);
         res.send(ex.message);
     }
-})
+});
 router.delete('/:id',async(req,res)=>{
     try{
         let result = await Genres.findOneAndDelete({id:Number.parseInt(req.params.id)},{useFindAndModify: false});
@@ -78,12 +64,6 @@ router.delete('/:id',async(req,res)=>{
         console.log(ex.message);
         res.send(ex.message);
     }
-})
-function validate(data){
-    const schema = Joi.object({
-        value: Joi.string().min(3).required()
-    })
-    return schema.validate(data);
-};
+});
 
 module.exports = router;
