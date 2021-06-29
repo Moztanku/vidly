@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const movies = require('./routes/movies')
 const customers = require('./routes/customers');
 const genres = require('./routes/genres');
 const main = require('./routes/main');
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use('/',main);
 app.use('/api/genres',genres);
 app.use('/api/customers',customers)
+app.use('/api/movies',movies);
 
 const port = process.env.PORT || 3000;
 app.listen(port,'localhost',()=>{

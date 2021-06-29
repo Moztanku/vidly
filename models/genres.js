@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const mongoose = require('mongoose');
 
-const Genres = new mongoose.model('Genre',{
+const genreSchema = new mongoose.Schema({
     id:{
         type: Number,
         required: true
@@ -13,6 +13,7 @@ const Genres = new mongoose.model('Genre',{
         required: true
     }
 });
+const Genres = new mongoose.model('Genre',genreSchema);
 
 function validate(data){
     const schema = Joi.object({
@@ -20,6 +21,12 @@ function validate(data){
     })
     return schema.validate(data);
 };
-
+function getGenreById(id){
+    return new Promise((res,rej)=>{
+        res(Genres.findById(id));
+    })
+};
+module.exports.getGenreById = getGenreById;
+module.exports.genreSchema = genreSchema;
 module.exports.Genres = Genres;
 module.exports.validate = validate;
