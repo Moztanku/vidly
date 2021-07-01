@@ -2,7 +2,7 @@ const Joi = require('joi');
 const mongoose = require('mongoose');
 
 
-const Rental = new mongoose.model('Rental',new mongoose.Schema({
+const Rental = mongoose.model('Rental',new mongoose.Schema({
     customer: {
         type: new mongoose.Schema({
             name: {

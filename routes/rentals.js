@@ -45,7 +45,7 @@ router.post('/',async(req,res)=>{
             .run();
 
         res.send(rental.toObject());
-    }
+    } 
     catch(ex){
         console.error(ex.message);
         res.send(ex.message);
