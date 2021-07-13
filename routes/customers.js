@@ -1,28 +1,27 @@
 const express = require('express');
 const router = express.Router();
 const {Customer, validate} = require('../models/customer');
+const auth = require('../middleware/auth');
 
-router.get('/',async(req,res)=>{
+router.get('/',async(req,res,next)=>{
     try{
         const result = await Customer.find({}).lean().sort({name:1});
         res.send(result);
     }
     catch(ex){
-        console.log(ex.message);
-        res.send(ex.message);
+        next(ex);
     }
 });
-router.get('/:id',async(req,res)=>{
+router.get('/:id',async(req,res,next)=>{
     try{
         const result = await Customer.findById(req.params.id);
         res.send(result?result.toObject():'Customer with a given id doesn\'t exist.');
     }
     catch(ex){
-        console.log(ex.message);
-        res.send(ex.message);
+        next(ex);
     }
 });
-router.post('/',async(req,res)=>{
+router.post('/',auth,async(req,res,next)=>{
     const {error} = validate(req.body);
     if(error) return res.status(400).send(error);
     try{
@@ -35,11 +34,10 @@ router.post('/',async(req,res)=>{
         res.send(result);
     }
     catch(ex){
-        console.log(ex.message);
-        res.send(ex.message);
+        next(ex);
     }
 });
-router.put('/:id',async(req,res)=>{
+router.put('/:id',auth,async(req,res,next)=>{
     const {error} = validate(req.body);
     if(error) return res.status(400).send(error);
     try{
@@ -54,18 +52,16 @@ router.put('/:id',async(req,res)=>{
         res.send(result?result.toObject():'Customer with a given id doesn\'t exist.');
     }
     catch(ex){
-        console.log(ex.message);
-        res.send(ex.message);
+        next(ex);
     }
 });
-router.delete('/:id',async(req,res)=>{
+router.delete('/:id',auth,async(req,res,next)=>{
     try{
         const result = await Customer.findByIdAndDelete(req.params.id,{useFindAndModify: false});
         res.send(result?result.toObject():'Customer with a given id doesn\'t exist.');
     }
     catch(ex){
-        console.log(ex.message);
-        res.send(ex.message);
+        next(ex);
     }
 });
 

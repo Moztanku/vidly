@@ -6,21 +6,21 @@ const Fawn = require('fawn');
 const {Rental, validate} = require('../models/rental');
 const {getCustomerById} = require('../models/customer');
 const {getMovieById} = require('../models/movie');
+const auth = require('../middleware/auth');
 
 Fawn.init(mongoose);
 
-router.get('/',async(req,res)=>{
+router.get('/',async(req,res,next)=>{
     try{
         const result = await Rental.find({}).lean();
         res.send(result);
     }
     catch(ex){
-        console.error(ex.message);
-        res.send(ex.message);
+        next(ex);
     }
 });
 
-router.post('/',async(req,res)=>{
+router.post('/',auth,async(req,res,next)=>{
     const {error} = validate(req.body);
     if(error) return res.status(400).send(error);
     try{
@@ -47,8 +47,7 @@ router.post('/',async(req,res)=>{
         res.send(rental.toObject());
     } 
     catch(ex){
-        console.error(ex.message);
-        res.send(ex.message);
+        next(ex);
     }
 });
 

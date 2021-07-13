@@ -1,33 +1,30 @@
 const express = require('express');
 const router = express.Router();
 const {Genres, validate} = require('../models/genres');
+const auth = require('../middleware/auth');
+const admin = require('../middleware/admin');
+const asyncMiddleware = require('../middleware/async');
 
 async function getGenresCount(){
-    const result = await Genres.findOne({}).sort({id:-1}).select({id:1,_id:0}).lean();
-    return result.id;
+    try{
+        const result = await Genres.findOne({}).sort({id:-1}).select({id:1,_id:0}).lean();
+        return result.id;
+    }
+    catch(ex){
+        return 0;
+    }
 };
 getGenresCount().then(res=>genresCount=res);
 
-router.get('/',async (req,res)=>{
-    try{
-        let genres = await Genres.find({}).lean();
-        res.send(genres);
-    }
-    catch(ex){
-        console.log(ex.message);
-    }
-});
-router.get('/:id',async (req,res)=>{
-    try{    
+router.get('/',asyncMiddleware(async (req,res)=>{
+    let genres = await Genres.find({}).lean();
+    res.send(genres);
+}));
+router.get('/:id',asyncMiddleware(async (req,res,next)=>{
         let result = await Genres.findOne({id:Number.parseInt(req.params.id)}).lean();
         res.send(result?result:'Genre with a given id doesn\'t exist.');
-    }
-    catch(ex){
-        console.log(ex.message);
-        res.send(ex.message);
-    }
-});
-router.post('/',async(req,res)=>{
+}));
+router.post('/',auth,async(req,res,next)=>{
     const {error} = validate(req.body);
     if(error) return res.status(400).send(error);
     try{
@@ -39,11 +36,10 @@ router.post('/',async(req,res)=>{
         res.send(result.toObject());
     }
     catch(ex){
-        console.log(ex.message);
-        res.send(ex.message);
+        next(ex);
     }
 });
-router.put('/:id',async(req,res)=>{
+router.put('/:id',auth,async(req,res,next)=>{
     const {error} = validate(req.body);
     if(error) return res.status(400).send(error);
     try{
@@ -51,18 +47,16 @@ router.put('/:id',async(req,res)=>{
         res.send(result?result.toObject():'Genre with a given id doesn\'t exist.');
     }
     catch(ex){
-        console.log(ex.message);
-        res.send(ex.message);
+        next(ex);
     }
 });
-router.delete('/:id',async(req,res)=>{
+router.delete('/:id',[auth,admin],async(req,res,next)=>{
     try{
         let result = await Genres.findOneAndDelete({id:Number.parseInt(req.params.id)},{useFindAndModify: false});
         res.send(result?result.toObject():'Genre with a given id doesn\'t exist.');
     }
     catch(ex){
-        console.log(ex.message);
-        res.send(ex.message);
+        next(ex);
     }
 });
 

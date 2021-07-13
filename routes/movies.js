@@ -3,28 +3,27 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const {Movies, validate} = require('../models/movie');
 const {getGenreById} = require('../models/genres')
+const auth = require('../middleware/auth');
 
-router.get('/',async(req,res)=>{
+router.get('/',async(req,res,next)=>{
     try{
         const result = await Movies.find({}).lean();
         res.send(result);
     }
     catch(ex){
-        console.error(ex.message);
-        res.send(ex.message);
+        next(ex);
     }
 });
-router.get('/:id',async(req,res)=>{
+router.get('/:id',async(req,res,next)=>{
     try{
         const result = await Movies.findById(req.params.id).lean();
         res.send(result?result:'Couldn\'t find Movie with given id.');
     }
     catch(ex){
-        console.error(ex.message);
-        res.send(ex.message);
+        next(ex);
     }
 });
-router.post('/',async(req,res)=>{
+router.post('/',auth,async(req,res,next)=>{
     const {error} = validate(req.body);
     if(error) return res.status(400).send(error);
     try{
@@ -42,26 +41,23 @@ router.post('/',async(req,res)=>{
         res.send(result.toObject());
     }
     catch(ex){
-        console.error(ex.message);
-        res.send(ex.message);
+        next(ex);
     }
 });
-router.put('/:id',async(req,res)=>{
+router.put('/:id',auth,async(req,res,next)=>{
     try{
 
     }
     catch(ex){
-        console.error(ex.message);
-        res.send(ex.message);
+        next(ex);
     }
 });
-router.delete('/:id',async(req,res)=>{
+router.delete('/:id',auth,async(req,res,next)=>{
     try{
 
     }
     catch(ex){
-        console.error(ex.message);
-        res.send(ex.message);
+        next(ex);
     }
 });
 

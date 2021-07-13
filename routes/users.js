@@ -4,12 +4,18 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const Fawn = require('fawn');
 const _ = require('lodash');
+const jwt = require('jsonwebtoken');
 
 const {User,validate} = require('../models/user');
+const auth = require('../middleware/auth');
 
 // List all users
-router.get('/',async(req,res)=>{
+router.get('/',async(req,res,next)=>{
+});
 
+router.get('/me',auth,async(req,res,next)=>{
+    const user = await User.findById(req.user._id).select('-password').lean();
+    res.send(user);
 });
 
 // Add new user
@@ -23,9 +29,10 @@ router.post('/',async (req,res)=>{
     user = new User(_.pick(req.body,['name','email','password']));
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password,salt);
-
     await user.save();
-    res.send(_.pick(user, ['name','email']));
+
+    const token = user.generateAuthToken();
+    res.header('x-auth-token',token).send(_.pick(user, ['name','email']));
 });
 
 module.exports = router;
