@@ -3,13 +3,13 @@ const express = require('express');
 const app = express();
 const winston = require('winston');
 
+app.use(express.json());
 require('./startup/logging')();
 require('./startup/routes')(app);
 require('./startup/db')();
 
-app.use(express.json());
-
-const port = process.env.PORT || 3000;
-app.listen(port,'localhost',()=>{
+const port = process.env.PORT || 3001;
+const server = app.listen(port,'localhost',()=>{
     winston.info(`listening on port ${port}`);
 });
+module.exports = server;

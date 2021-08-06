@@ -1,5 +1,6 @@
 const express = require('express');
 const users = require('../routes/users');
+const returns = require('../routes/returns');
 const rentals = require('../routes/rentals');
 const movies = require('../routes/movies')
 const customers = require('../routes/customers');
@@ -13,6 +14,7 @@ module.exports = function(app){
     app.use('/api/genres',genres);
     app.use('/api/customers',customers)
     app.use('/api/movies',movies);
+    app.use('/api/returns',returns);
     app.use('/api/rentals',rentals);
     app.use('/api/users',users);
     app.use('/api/auth',auth);

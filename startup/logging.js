@@ -1,5 +1,5 @@
 const winston = require('winston');
-require('winston-mongodb');
+//require('winston-mongodb');
 
 module.exports = function(){
     winston.handleExceptions(
@@ -15,5 +15,5 @@ module.exports = function(){
         throw ex;
     });
     winston.add(winston.transports.File, {filename: 'logfile.log'});
-    winston.add(winston.transports.MongoDB, { db: 'mongodb://localhost/vidly' });
+    //winston.add(winston.transports.MongoDB, { db: 'mongodb://localhost/vidly' });
 };
