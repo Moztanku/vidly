@@ -160,4 +160,5 @@ describe('/api/genres',()=>{
             expect(res.status).toBe(403);
         });
     });
+    afterAll(()=>mongoose.disconnect());
 });

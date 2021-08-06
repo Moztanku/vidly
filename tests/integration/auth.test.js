@@ -1,6 +1,7 @@
 const request = require('supertest');
 const {User} = require('../../models/user');
-const {Genres} = require('../../models/genres')
+const {Genres} = require('../../models/genres');
+const mongoose = require('mongoose');
 
 describe('auth middleware',()=>{
     let server;
@@ -35,4 +36,5 @@ describe('auth middleware',()=>{
         const result = await exec();
         expect(result.status).toBe(200);
     });
+    afterAll(()=>mongoose.disconnect());
 });

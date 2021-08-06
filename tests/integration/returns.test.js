@@ -47,17 +47,18 @@ describe('/api/returns',()=>{
         const res = await exec();
         expect(res.status).toBe(400);
     });
-    it('should return 400 if ',async()=>{
-
+    it('should return 404 if no rental for customer/movie',async()=>{
+        await Rental.remove({});
+        const res = await exec();
+        expect(res.status).toBe(404);
+    });
+    it('should return 200 if valid request',async()=>{
+        const res = await exec();
+        expect(res.status).toBe(200);
     });
     it('should return 400 if ',async()=>{
 
     });
-    it('should return 400 if ',async()=>{
 
-    });
-    it('should return 400 if ',async()=>{
-
-    });
-
+    afterAll(()=>mongoose.disconnect());
 });
