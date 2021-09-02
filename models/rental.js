@@ -1,8 +1,7 @@
 const Joi = require('joi');
 const mongoose = require('mongoose');
 
-
-const Rental = mongoose.model('Rental',new mongoose.Schema({
+const rentalSchema = new mongoose.Schema({
     customer: {
         type: new mongoose.Schema({
             name: {
@@ -32,7 +31,14 @@ const Rental = mongoose.model('Rental',new mongoose.Schema({
         required: true,
         default: Date.now()
     }
-}));
+});
+rentalSchema.statics.lookup = function(customerId,movieId){
+    return this.findOne({
+        'customer._id':customerId,
+        'movie._id':movieId
+    }).lean();
+};
+const Rental = mongoose.model('Rental',rentalSchema);
 
 function validate(data){
     const schema = Joi.object({

@@ -4,6 +4,7 @@ const app = express();
 const winston = require('winston');
 
 app.use(express.json());
+require('./startup/prod')(app);
 require('./startup/logging')();
 require('./startup/routes')(app);
 require('./startup/db')();
